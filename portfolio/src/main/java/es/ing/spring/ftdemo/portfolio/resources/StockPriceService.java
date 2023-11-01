@@ -9,6 +9,12 @@ public class StockPriceService {
   StockPriceClient client;
   StatsResource stats;
 
+
+  public StockPriceService(StockPriceClient client, StatsResource stats) {
+    this.client = client;
+    this.stats = stats;
+  }
+
   private final ConcurrentMap<String, StockPrice> cache = new ConcurrentHashMap<>();
 
   //    @Fallback(fallbackMethod = "getPriceFallback")

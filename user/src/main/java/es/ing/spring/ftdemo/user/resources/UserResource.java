@@ -19,6 +19,10 @@ public class UserResource {
 
   PortfolioClient client;
 
+  public UserResource(PortfolioClient client) {
+    this.client = client;
+  }
+
   @GetMapping
   public List<User> get() {
     return users.values().stream().map(UserSimulation::toUser).collect(Collectors.toList());

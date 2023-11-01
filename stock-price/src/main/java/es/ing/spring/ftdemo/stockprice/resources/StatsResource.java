@@ -12,13 +12,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/stocks/stats")
 public class StatsResource {
-  private final AtomicInteger concurrentRequests = new AtomicInteger(0);
+  private final AtomicInteger concurrentRequests;
 
-  private List<Long> timestamps = new ArrayList<>(List.of(0L));
-  private List<Integer> totalCounters = new ArrayList<>(List.of(0));
-  private List<Integer> failuresCounters = new ArrayList<>(List.of(0));
+  private final List<Long> timestamps;
+  private final List<Integer> totalCounters;
+  private final List<Integer> failuresCounters;
 
   private long lastFullSecond = System.currentTimeMillis();
+
+  public StatsResource() {
+    concurrentRequests = new AtomicInteger(0);
+    timestamps = new ArrayList<>(List.of(0L));
+    totalCounters = new ArrayList<>(List.of(0));
+    failuresCounters = new ArrayList<>(List.of(0));
+  }
 
   public <T> T request(IntFunction<T> action) {
     int currentInFlightRequests = concurrentRequests.incrementAndGet();
@@ -85,9 +92,9 @@ public class StatsResource {
 
   @DeleteMapping
   public synchronized void reset() {
-    timestamps = new ArrayList<>(List.of(0L));
-    totalCounters = new ArrayList<>(List.of(0));
-    failuresCounters = new ArrayList<>(List.of(0));
+    timestamps.clear();
+    totalCounters.clear();
+    failuresCounters.clear();
     lastFullSecond = System.currentTimeMillis();
   }
 }

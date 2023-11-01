@@ -28,6 +28,11 @@ public class PortfolioResource {
 
   StatsResource stats;
 
+  public PortfolioResource(StockPriceService service, StatsResource stats) {
+    this.service = service;
+    this.stats = stats;
+  }
+
   @GetMapping("/{user}")
   public Portfolio get(@PathVariable("user") String user)
       throws ExecutionException, InterruptedException {

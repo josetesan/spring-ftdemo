@@ -11,12 +11,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/portfolio/stats")
 public class StatsResource {
-  private final AtomicInteger allTickersCount = new AtomicInteger(0);
-  private final AtomicInteger cacheSize = new AtomicInteger(0);
+  private final AtomicInteger allTickersCount;
+  private final AtomicInteger cacheSize;
+  private final List<Long> timestamps;
+  private final List<Integer> totalCounters;
+  private final  List<Integer> cachedCounters;
 
-  private List<Long> timestamps = new ArrayList<>(List.of(0L));
-  private List<Integer> totalCounters = new ArrayList<>(List.of(0));
-  private List<Integer> cachedCounters = new ArrayList<>(List.of(0));
+
+  public StatsResource() {
+    cacheSize =new AtomicInteger(0);
+    allTickersCount = new AtomicInteger(0);
+    timestamps  = new ArrayList<>(List.of(0L));
+    totalCounters = new ArrayList<>(List.of(0));
+    cachedCounters  = new ArrayList<>(List.of(0));
+  }
 
   private long lastFullSecond = System.currentTimeMillis();
 
@@ -85,9 +93,9 @@ public class StatsResource {
 
   @DeleteMapping
   public synchronized void reset() {
-    timestamps = new ArrayList<>(List.of(0L));
-    totalCounters = new ArrayList<>(List.of(0));
-    cachedCounters = new ArrayList<>(List.of(0));
+    timestamps.clear();
+    totalCounters.clear();
+    cachedCounters.clear();
     lastFullSecond = System.currentTimeMillis();
   }
 }
