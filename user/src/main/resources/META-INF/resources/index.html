@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+           crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>Users</h1>
+            </div>
+        </div>
+
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">User</th>
+                <th scope="col">Request duration</th>
+                <th scope="col">Portfolio size</th>
+                <th scope="col">Portfolio value</th>
+                <th scope="col">#</th>
+            </tr>
+            </thead>
+            <tbody id="usersTable">
+            <tr>
+                <th scope="row">foo-bar-baz</th>
+                <td>2</td>
+                <td>3</td>
+                <td>5</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-danger">Remove</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-4">Current users: <span id="currentUsers" class="badge bg-secondary">0</span></div>
+            <div class="col-2"></div>
+            <div class="col-4 btn btn-success" onclick="add()">Add new user</div>
+            <div class="col-1"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let users = new Map();
+
+    let usersTable;
+    let currentUsers;
+
+    let refreshTimer;
+
+    function init() {
+        usersTable = document.getElementById("usersTable");
+        currentUsers = document.getElementById("currentUsers");
+        refresh();
+    }
+
+    function refresh() {
+        function createTableRow(datum) {
+            let user = datum.user;
+            let requestDuration = datum.requestDuration;
+            let error = datum.error;
+            let portfolioSize = datum.portfolioSize;
+            let portfolioValue = datum.portfolioValue;
+
+            let tr = document.createElement("tr");
+            {
+                let th = document.createElement("th");
+                th.scope = "row";
+                th.textContent = user;
+                tr.appendChild(th);
+            }
+            {
+                let td = document.createElement("td");
+                td.textContent = requestDuration;
+                tr.appendChild(td);
+            }
+            if (error) {
+                let td = document.createElement("td");
+                td.colSpan = 2;
+                td.textContent = "" + error;
+                tr.appendChild(td);
+            } else {
+                {
+                    let td = document.createElement("td");
+                    td.textContent = "" + portfolioSize;
+                    tr.appendChild(td);
+                }
+                {
+                    let td = document.createElement("td");
+                    td.textContent = "" + portfolioValue;
+                    tr.appendChild(td);
+                }
+            }
+            {
+                let button = document.createElement("button");
+                button.type = "button";
+                button.classList.add("btn", "btn-sm", "btn-danger");
+                button.textContent = "Remove";
+                button.addEventListener("click", event => {
+                    remove(user);
+                });
+                let td = document.createElement("td");
+                td.appendChild(button);
+                tr.appendChild(td);
+            }
+            return tr;
+        }
+
+        fetch("/users")
+            .then(response => response.json())
+            .then(data => {
+                let rows = [];
+                for (let datum of data) {
+                    rows.push(createTableRow(datum));
+                }
+                usersTable.replaceChildren(...rows);
+                currentUsers.textContent = "" + data.length;
+
+                refreshTimer = setTimeout(refresh, 1000);
+            });
+    }
+
+    function add() {
+        if (refreshTimer) {
+            clearTimeout(refreshTimer);
+        }
+
+        fetch("/users", {method: "POST"})
+            .then(refresh);
+    }
+
+    function remove(user) {
+        if (refreshTimer) {
+            clearTimeout(refreshTimer);
+        }
+
+        fetch("/users/" + user, {method: "DELETE"})
+            .then(refresh);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>

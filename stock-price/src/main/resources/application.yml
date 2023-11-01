@@ -1,0 +1,6 @@
+server:
+  port : 5050
+spring:
+  threads:
+    virtual:
+      enabled: true
