@@ -1,16 +1,14 @@
 package es.ing.spring.ftdemo.stockprice.resources;
 
-import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.InternalServerErrorException;
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadLocalRandom;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -28,7 +26,13 @@ public class StockPriceResource {
   }
 
   @GetMapping("/stock/{ticker}")
+  @ExceptionHandler({
+    InternalServerErrorException.class,
+    BadRequestException.class,
+    OkException.class
+  })
   public StockPrice get(@PathVariable("ticker") String ticker) {
+
     return stats.request(
         currentInFlightRequests -> {
           if (currentInFlightRequests <= FAST) {
@@ -56,8 +60,7 @@ public class StockPriceResource {
             } else {
               stats.recordKo();
               randomSleep(0, 5000);
-              throw new WebApplicationException(
-                  Response.ok("invalid JSON", MediaType.APPLICATION_JSON_TYPE).build());
+              throw new OkException();
             }
           }
         });
@@ -84,5 +87,26 @@ public class StockPriceResource {
 
   private static int nonnegative(int n) {
     return Math.max(0, n);
+  }
+
+  @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+  private static class BadRequestException extends RuntimeException {
+    public BadRequestException() {
+      super();
+    }
+  }
+
+  @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+  private static class InternalServerErrorException extends RuntimeException {
+    public InternalServerErrorException() {
+      super();
+    }
+  }
+
+  @ResponseStatus(value = HttpStatus.OK)
+  private static class OkException extends RuntimeException {
+    public OkException() {
+      super();
+    }
   }
 }

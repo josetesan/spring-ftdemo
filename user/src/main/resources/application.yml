@@ -1,9 +1,5 @@
 server:
   port : 8080
-spring:
-  threads:
-    virtual:
-      enabled: true
 http.clients:
   portfolio-client:
     url: http://localhost:7070

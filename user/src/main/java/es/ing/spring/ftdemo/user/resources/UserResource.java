@@ -17,12 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserResource {
   private final ConcurrentMap<String, UserSimulation> users = new ConcurrentHashMap<>();
 
-  PortfolioClient client;
-
-  public UserResource(PortfolioClient client) {
-    this.client = client;
-  }
-
   @GetMapping
   public List<User> get() {
     return users.values().stream().map(UserSimulation::toUser).collect(Collectors.toList());
@@ -31,7 +25,7 @@ public class UserResource {
   @PostMapping
   public void add() {
     String user = Faker.instance().funnyName().name();
-    UserSimulation simulation = new UserSimulation(user, client);
+    UserSimulation simulation = new UserSimulation(user);
     users.put(user, simulation);
   }
 

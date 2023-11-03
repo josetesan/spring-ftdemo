@@ -15,15 +15,14 @@ public class StatsResource {
   private final AtomicInteger cacheSize;
   private final List<Long> timestamps;
   private final List<Integer> totalCounters;
-  private final  List<Integer> cachedCounters;
-
+  private final List<Integer> cachedCounters;
 
   public StatsResource() {
-    cacheSize =new AtomicInteger(0);
+    cacheSize = new AtomicInteger(0);
     allTickersCount = new AtomicInteger(0);
-    timestamps  = new ArrayList<>(List.of(0L));
+    timestamps = new ArrayList<>(List.of(0L));
     totalCounters = new ArrayList<>(List.of(0));
-    cachedCounters  = new ArrayList<>(List.of(0));
+    cachedCounters = new ArrayList<>(List.of(0));
   }
 
   private long lastFullSecond = System.currentTimeMillis();
