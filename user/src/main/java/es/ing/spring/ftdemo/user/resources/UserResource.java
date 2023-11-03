@@ -24,7 +24,7 @@ public class UserResource {
 
   @PostMapping
   public void add() {
-    String user = Faker.instance().funnyName().name();
+    String user = Faker.instance().harryPotter().character();
     UserSimulation simulation = new UserSimulation(user);
     users.put(user, simulation);
   }

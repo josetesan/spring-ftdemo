@@ -10,6 +10,7 @@
 
   <artifactId>portfolio</artifactId>
 
+
   <build>
     <plugins>
       <plugin>
@@ -28,10 +29,6 @@
       <plugin>
         <groupId>org.graalvm.buildtools</groupId>
         <artifactId>native-maven-plugin</artifactId>
-        <version>${native-plugin.version}</version>
-        <configuration>
-          <mainClass>es.ing.spring.ftdemo.portfolio.PortfolioApplication</mainClass>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>

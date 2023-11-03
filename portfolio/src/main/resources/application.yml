@@ -1,3 +1,59 @@
 server:
   port : 7070
+resilience4j:
+  circuitbreaker:
+    configs:
+        default:
+            registerHealthIndicator: true
+            slidingWindowSize: 10
+            minimumNumberOfCalls: 5
+            permittedNumberOfCallsInHalfOpenState: 3
+            automaticTransitionFromOpenToHalfOpenEnabled: true
+            waitDurationInOpenState: 5s
+            failureRateThreshold: 50
+            eventConsumerBufferSize: 10
+            recordExceptions:
+                - org.springframework.web.client.HttpServerErrorException
+                - java.util.concurrent.TimeoutException
+                - java.io.IOException
+                - org.springframework.web.client.ResourceAccessException
+  retry:
+    configs:
+        default:
+            maxAttempts: 3
+            waitDuration: 100
+            retryExceptions:
+                - org.springframework.web.client.HttpServerErrorException
+                - java.util.concurrent.TimeoutException
+                - java.io.IOException
+                - org.springframework.web.client.ResourceAccessException
+  bulkhead:
+    configs:
+        default:
+            maxConcurrentCalls: 10
+  thread-pool-bulkhead:
+     configs:
+           default:
+               maxThreadPoolSize: 4
+               coreThreadPoolSize: 2
+               queueCapacity: 2
+  timelimiter:
+    configs:
+        default:
+            cancelRunningFuture: true
+            timeoutDuration: 2s
 
+
+management:
+      health:
+        circuitbreakers:
+           enabled: true
+        ratelimiters:
+           enabled: true
+      endpoints:
+        web:
+          exposure:
+            include: '*'
+      endpoint:
+         health:
+           show-details: always

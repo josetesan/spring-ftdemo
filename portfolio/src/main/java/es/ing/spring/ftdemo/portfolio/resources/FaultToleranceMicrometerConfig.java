@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class FaultToleranceMicrometerConfig {
+
   // this makes sure the Prometheus output from Micrometer is [nearly] identical to the one from MP
   // Metrics,
   // which ensures that the same dashboard can be used for both

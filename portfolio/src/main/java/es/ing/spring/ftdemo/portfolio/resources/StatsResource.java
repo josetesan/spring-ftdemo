@@ -93,8 +93,11 @@ public class StatsResource {
   @DeleteMapping
   public synchronized void reset() {
     timestamps.clear();
+    timestamps.add(0L);
     totalCounters.clear();
+    totalCounters.add(0);
     cachedCounters.clear();
+    cachedCounters.add(0);
     lastFullSecond = System.currentTimeMillis();
   }
 }
