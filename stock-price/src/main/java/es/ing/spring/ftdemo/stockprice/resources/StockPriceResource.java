@@ -92,21 +92,69 @@ public class StockPriceResource {
   @ResponseStatus(value = HttpStatus.BAD_REQUEST)
   private static class BadRequestException extends RuntimeException {
     public BadRequestException() {
-      super();
+      super("Bad Request");
+    }
+
+    public BadRequestException(String message) {
+      super(message);
+    }
+
+    public BadRequestException(String message, Throwable cause) {
+      super(message, cause);
+    }
+
+    public BadRequestException(Throwable cause) {
+      super(cause);
+    }
+
+    protected BadRequestException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+      super(message, cause, enableSuppression, writableStackTrace);
     }
   }
 
   @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
   private static class InternalServerErrorException extends RuntimeException {
     public InternalServerErrorException() {
-      super();
+      super("Internal Server Error");
+    }
+
+    public InternalServerErrorException(String message) {
+      super(message);
+    }
+
+    public InternalServerErrorException(String message, Throwable cause) {
+      super(message, cause);
+    }
+
+    public InternalServerErrorException(Throwable cause) {
+      super(cause);
+    }
+
+    protected InternalServerErrorException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+      super(message, cause, enableSuppression, writableStackTrace);
     }
   }
 
   @ResponseStatus(value = HttpStatus.OK)
   private static class OkException extends RuntimeException {
     public OkException() {
-      super();
+      super("OK Error");
+    }
+
+    public OkException(String message) {
+      super(message);
+    }
+
+    public OkException(String message, Throwable cause) {
+      super(message, cause);
+    }
+
+    public OkException(Throwable cause) {
+      super(cause);
+    }
+
+    protected OkException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+      super(message, cause, enableSuppression, writableStackTrace);
     }
   }
 }

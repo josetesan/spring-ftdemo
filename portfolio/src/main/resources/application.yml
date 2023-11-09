@@ -17,6 +17,8 @@ resilience4j:
                 - java.util.concurrent.TimeoutException
                 - java.io.IOException
                 - org.springframework.web.client.ResourceAccessException
+                - java.util.concurrent.ExecutionException
+                - java.nio.channels.ClosedChannelException
   retry:
     configs:
         default:
@@ -27,6 +29,8 @@ resilience4j:
                 - java.util.concurrent.TimeoutException
                 - java.io.IOException
                 - org.springframework.web.client.ResourceAccessException
+                - java.util.concurrent.ExecutionException
+                - java.nio.channels.ClosedChannelException
   bulkhead:
     configs:
         default:
@@ -57,3 +61,14 @@ management:
       endpoint:
          health:
            show-details: always
+
+spring:
+  application:
+    name: ftdemo-portfolio
+  http:
+    clients:
+       stockservice:
+          url: http://localhost:5050
+  devtools:
+    livereload:
+      port: 35730

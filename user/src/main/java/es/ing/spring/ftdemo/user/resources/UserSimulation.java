@@ -1,16 +1,15 @@
 package es.ing.spring.ftdemo.user.resources;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import java.time.Duration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import org.springframework.web.client.RestClient;
 
 public class UserSimulation {
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-  private RestClient client;
+
+  private PortfolioClientExchange portfolioClientExchange;
   private final String user;
 
   private long requestDuration;
@@ -18,9 +17,9 @@ public class UserSimulation {
   private int portfolioSize;
   private Integer portfolioValue;
 
-  public UserSimulation(String user) {
+  public UserSimulation(PortfolioClientExchange portfolioClientExchange,String user) {
+    this.portfolioClientExchange = portfolioClientExchange;
     this.user = user;
-    this.client = RestClient.create();
     executor.submit(this::update);
   }
 
@@ -39,13 +38,7 @@ public class UserSimulation {
     Portfolio portfolio = null;
     Exception exception = null;
     try {
-      portfolio =
-          client
-              .get()
-              .uri("http://localhost:7070/portfolio/{user}", user)
-              .accept(APPLICATION_JSON)
-              .retrieve()
-              .body(Portfolio.class);
+      portfolio = portfolioClientExchange.findByUser(user);
     } catch (Exception e) {
       exception = e;
     }

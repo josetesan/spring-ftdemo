@@ -17,6 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserResource {
   private final ConcurrentMap<String, UserSimulation> users = new ConcurrentHashMap<>();
 
+  PortfolioClientExchange portfolioClientExchange;
+
+  public UserResource(PortfolioClientExchange portfolioClientExchange) {
+    this.portfolioClientExchange = portfolioClientExchange;
+  }
+
   @GetMapping
   public List<User> get() {
     return users.values().stream().map(UserSimulation::toUser).collect(Collectors.toList());
@@ -25,7 +31,7 @@ public class UserResource {
   @PostMapping
   public void add() {
     String user = Faker.instance().harryPotter().character();
-    UserSimulation simulation = new UserSimulation(user);
+    UserSimulation simulation = new UserSimulation(portfolioClientExchange,user);
     users.put(user, simulation);
   }
 
