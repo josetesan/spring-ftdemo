@@ -5,6 +5,6 @@ import org.springframework.web.service.annotation.GetExchange;
 
 public interface PortfolioClientExchange {
 
-    @GetExchange("portfolio/{user}")
-    Portfolio findByUser(@PathVariable String user);
+  @GetExchange("portfolio/{user}")
+  Portfolio findByUser(@PathVariable String user);
 }

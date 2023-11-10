@@ -22,7 +22,7 @@ resilience4j:
   retry:
     configs:
         default:
-            maxAttempts: 3
+            maxAttempts: 2
             waitDuration: 100
             retryExceptions:
                 - org.springframework.web.client.HttpServerErrorException
@@ -34,7 +34,7 @@ resilience4j:
   bulkhead:
     configs:
         default:
-            maxConcurrentCalls: 10
+            maxConcurrentCalls: 50
   thread-pool-bulkhead:
      configs:
            default:
@@ -45,7 +45,7 @@ resilience4j:
     configs:
         default:
             cancelRunningFuture: true
-            timeoutDuration: 2s
+            timeoutDuration: 1s
 
 
 management:

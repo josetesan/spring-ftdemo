@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +40,11 @@ public class PortfolioResource {
     List<String> tickers = getPortfolioContent(user);
     List<StockPrice> portfolioData = getStockPrices(tickers);
     return fillPortfolio(portfolioData);
+  }
+
+  @DeleteMapping("/cache")
+  public void deleteCache() {
+    service.cleanCache();
   }
 
   private List<String> getPortfolioContent(String user) {

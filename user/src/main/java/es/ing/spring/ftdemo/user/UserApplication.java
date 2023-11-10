@@ -17,7 +17,6 @@ public class UserApplication {
     SpringApplication.run(UserApplication.class, args);
   }
 
-
   @Bean
   PortfolioClientExchange portfolioClientExchange(
       @Value("${spring.http.clients.portfolio.url}") String url,

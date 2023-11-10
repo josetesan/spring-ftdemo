@@ -6,5 +6,5 @@ import org.springframework.web.service.annotation.GetExchange;
 public interface StockPriceClientExchange {
 
   @GetExchange("/stocks/stock/{ticker}")
-  StockPrice findById(@PathVariable String ticker);
+  StockPrice findById(@PathVariable("ticker") String ticker);
 }

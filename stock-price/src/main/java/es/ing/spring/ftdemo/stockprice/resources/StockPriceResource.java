@@ -4,7 +4,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,13 +25,7 @@ public class StockPriceResource {
   }
 
   @GetMapping("/stock/{ticker}")
-  @ExceptionHandler({
-    InternalServerErrorException.class,
-    BadRequestException.class,
-    OkException.class
-  })
-  public StockPrice get(@PathVariable("ticker") String ticker) {
-
+  public StockPrice get(@PathVariable String ticker) {
     return stats.request(
         currentInFlightRequests -> {
           if (currentInFlightRequests <= FAST) {
@@ -44,6 +37,7 @@ public class StockPriceResource {
             randomSleep(100, 1000);
             return priceOf(ticker);
           } else {
+            // recibimos mas de 20 peticiones por segundo, forcemos errores
             int randomOutcome = ThreadLocalRandom.current().nextInt(10);
             if (randomOutcome < 3) {
               stats.recordOk();
@@ -52,15 +46,15 @@ public class StockPriceResource {
             } else if (randomOutcome < 6) {
               stats.recordKo();
               randomSleep(0, 5000);
-              throw new InternalServerErrorException();
+              throw new InternalServerErrorException("randomOutcome < 6");
             } else if (randomOutcome < 7) {
               stats.recordKo();
               randomSleep(0, 5000);
-              throw new BadRequestException();
+              throw new BadRequestException("randomOutcome < 7");
             } else {
               stats.recordKo();
               randomSleep(0, 5000);
-              throw new OkException();
+              throw new OkException("randomOutcome > 7");
             }
           }
         });
@@ -90,71 +84,25 @@ public class StockPriceResource {
   }
 
   @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-  private static class BadRequestException extends RuntimeException {
-    public BadRequestException() {
-      super("Bad Request");
-    }
+  class BadRequestException extends RuntimeException {
 
-    public BadRequestException(String message) {
-      super(message);
-    }
-
-    public BadRequestException(String message, Throwable cause) {
-      super(message, cause);
-    }
-
-    public BadRequestException(Throwable cause) {
-      super(cause);
-    }
-
-    protected BadRequestException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-      super(message, cause, enableSuppression, writableStackTrace);
+    public BadRequestException(String s) {
+      super(s);
     }
   }
 
   @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-  private static class InternalServerErrorException extends RuntimeException {
-    public InternalServerErrorException() {
-      super("Internal Server Error");
-    }
-
-    public InternalServerErrorException(String message) {
-      super(message);
-    }
-
-    public InternalServerErrorException(String message, Throwable cause) {
-      super(message, cause);
-    }
-
-    public InternalServerErrorException(Throwable cause) {
-      super(cause);
-    }
-
-    protected InternalServerErrorException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-      super(message, cause, enableSuppression, writableStackTrace);
+  class InternalServerErrorException extends RuntimeException {
+    public InternalServerErrorException(String s) {
+      super(s);
     }
   }
 
   @ResponseStatus(value = HttpStatus.OK)
-  private static class OkException extends RuntimeException {
-    public OkException() {
-      super("OK Error");
-    }
+  class OkException extends RuntimeException {
 
-    public OkException(String message) {
-      super(message);
-    }
-
-    public OkException(String message, Throwable cause) {
-      super(message, cause);
-    }
-
-    public OkException(Throwable cause) {
-      super(cause);
-    }
-
-    protected OkException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-      super(message, cause, enableSuppression, writableStackTrace);
+    public OkException(String s) {
+      super(s);
     }
   }
 }

@@ -1,10 +1,11 @@
 package es.ing.spring.ftdemo.portfolio.resources;
 
 
+import io.github.resilience4j.retry.annotation.Retry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,13 @@ public class StockPriceService {
 
   private final ConcurrentMap<String, StockPrice> cache = new ConcurrentHashMap<>();
 
-  //  @TimeLimiter(name = "timelimiter", fallbackMethod = "getPriceFallback")
-    @CircuitBreaker(name = "circuit")
-  //    @Bulkhead(name = "bulk")
-  //  @Retry(name = "retry")
-  public StockPrice getPrice(String ticker) {
+
+
+  //      @Bulkhead(name = "bulk", type = Bulkhead.Type.SEMAPHORE)
+  //      @CircuitBreaker(name = "circuit")
+  @Retry(name = "retry", fallbackMethod = "getPriceFallback")
+  @TimeLimiter(name = "timelimiter")
+  StockPrice getPrice(String ticker) {
     StockPrice result = stockPriceClientExchange.findById(ticker);
     cache.put(ticker, result);
     stats.recordNormal();
@@ -38,5 +41,9 @@ public class StockPriceService {
   public StockPrice getPriceFallback(String ticker, Exception e) {
     stats.recordCached();
     return cache.getOrDefault(ticker, new StockPrice(ticker, null));
+  }
+
+  void cleanCache() {
+    cache.clear();
   }
 }
