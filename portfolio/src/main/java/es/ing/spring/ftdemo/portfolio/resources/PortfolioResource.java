@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
@@ -11,6 +12,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,12 +26,11 @@ public class PortfolioResource {
   private final ConcurrentMap<String, List<String>> portfolios =
       new ConcurrentHashMap<>(); // tickers by user
 
-  private final ExecutorService executor = Executors.newCachedThreadPool();
-
   StockPriceService service;
 
   StatsResource stats;
 
+  private final ExecutorService executor = Executors.newCachedThreadPool();
   public PortfolioResource(StockPriceService service, StatsResource stats) {
     this.service = service;
     this.stats = stats;
@@ -71,8 +73,12 @@ public class PortfolioResource {
   private List<StockPrice> getStockPrices(List<String> tickers)
       throws InterruptedException, ExecutionException {
     List<Future<StockPrice>> futures = new ArrayList<>();
+
     for (String ticker : tickers) {
-      futures.add(executor.submit(() -> service.getPrice(ticker)));
+      futures.add(CompletableFuture.supplyAsync(()-> service.getPrice(ticker), executor)
+          .completeOnTimeout(new StockPrice(ticker,null), 2, TimeUnit.SECONDS))
+//          .orTimeout(1, TimeUnit.SECONDS))
+      ;
     }
     List<StockPrice> portfolioData = new ArrayList<>(futures.size());
     for (Future<StockPrice> future : futures) {

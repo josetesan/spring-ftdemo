@@ -35,6 +35,8 @@ resilience4j:
     configs:
         default:
             maxConcurrentCalls: 50
+            maxWaitDuration: 1s
+            writableStackTraceEnabled: false
   thread-pool-bulkhead:
      configs:
            default:
@@ -44,8 +46,8 @@ resilience4j:
   timelimiter:
     configs:
         default:
-            cancelRunningFuture: true
-            timeoutDuration: 1s
+            cancelRunningFuture: false
+            timeoutDuration: 2s
 
 
 management:

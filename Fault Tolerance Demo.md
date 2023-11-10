@@ -24,6 +24,8 @@ Este servicio StockPrice está tuneado para la demo para fallar cuando recibe ci
 
 1. **Happy path**
 
+   > Añadimos 4 usuarios
+
    Ver como peticiones de salida se corresponden con peticiones de entrada.
 
 2. **Se para el third-party ( stockservice )**
@@ -49,10 +51,27 @@ Este servicio StockPrice está tuneado para la demo para fallar cuando recibe ci
 
 3. **Empezamos a sobrecargar el sistema**
 
+   > Añadimos hasta 5 usuarios
+
    3.1. **Tiempos excesivos de carga**
 
    Vemos que aunque el sistema no parece fallar, a veces tarda demasiado en responder, y eso puede ser bloqueante. Algo importante para un sistema es el rendimiento, y el tiempo de espera de un cliente a una peticion. Por eso puede ser interesante introducir timeouts.
 
    3.2 **Introducimos timeout**
 
-   Desafortunadamente, el servicio de timeout SOLO funciona con Futuros, CompletionStage
+   Introducimos timeout, con lo que vemos que el cliente no espera suficiente tiempo, pero dependiendo del requisito funcional, puede ser lo que queramos que vea o no.
+   Para ello, podemos trabajar con un fallback
+
+   Cuando vemos que un servicio falla mucho, el patron base a usar es el circuit-breaker, con lo cual conseguimos no saturar el servicio destino y darle tiempo que se recupere, si es que tenia sobrecarga.
+
+   3.3. **Circuit breaker**
+
+   Vemos que en el third-party hay spikes, y luego hay vacios : es el circuit breaker haciendo su trabajo. Intenta durante un tiempo configurable , y si el numero de errores es mayor del deseado, corta el trafico, aliviando entre otras cosas el trafico de red.
+   Al rato, vuelve a probar a ver si funciona, y si es asi, cierra el circuito y permite todas las conexiones.
+
+   3.4. **BulkHead**
+
+   Pero esto es un arma de doble filo : lo que está haciendo el _circuitbreaker_ es , que cada vez que se cierra el circuito, le machaca con todas las peticiones que tuviera en curso, lo cual puede volver a sobrecargar el sistema destino y volveriamos a empezar.
+   Para eso, lo mas adecuado es usa un control de la concurrencia, que en resiliencia se implementa con el patron BulkHead, aislar al sistema de un fallo de sus partes.
+
+   Ver que maxConcurrentCalls: 50 == Current in flight requests: 50
