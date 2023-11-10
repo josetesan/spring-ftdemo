@@ -7,13 +7,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,15 +24,13 @@ public class PortfolioResource {
 
   StatsResource stats;
 
-  private final ExecutorService executor = Executors.newCachedThreadPool();
   public PortfolioResource(StockPriceService service, StatsResource stats) {
     this.service = service;
     this.stats = stats;
   }
 
   @GetMapping("/{user}")
-  public Portfolio get(@PathVariable("user") String user)
-      throws ExecutionException, InterruptedException {
+  public Portfolio get(@PathVariable("user") String user) {
     List<String> tickers = getPortfolioContent(user);
     List<StockPrice> portfolioData = getStockPrices(tickers);
     return fillPortfolio(portfolioData);
@@ -70,21 +62,11 @@ public class PortfolioResource {
     }
   }
 
-  private List<StockPrice> getStockPrices(List<String> tickers)
-      throws InterruptedException, ExecutionException {
-    List<Future<StockPrice>> futures = new ArrayList<>();
-
-    for (String ticker : tickers) {
-      futures.add(CompletableFuture.supplyAsync(()-> service.getPrice(ticker), executor)
-          .completeOnTimeout(new StockPrice(ticker,null), 2, TimeUnit.SECONDS))
-//          .orTimeout(1, TimeUnit.SECONDS))
-      ;
-    }
-    List<StockPrice> portfolioData = new ArrayList<>(futures.size());
-    for (Future<StockPrice> future : futures) {
-      portfolioData.add(future.get());
-    }
-    return portfolioData;
+  private List<StockPrice> getStockPrices(List<String> tickers) {
+    return tickers.stream()
+        .map(ticker -> service.getPrice(ticker))
+        .map(CompletableFuture::join)
+        .toList();
   }
 
   private Portfolio fillPortfolio(List<StockPrice> portfolioData) {

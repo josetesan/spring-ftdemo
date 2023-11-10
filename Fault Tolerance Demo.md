@@ -24,7 +24,7 @@ Este servicio StockPrice está tuneado para la demo para fallar cuando recibe ci
 
 1. **Happy path**
 
-   > Añadimos 4 usuarios
+   > Añadimos 16 usuarios
 
    Ver como peticiones de salida se corresponden con peticiones de entrada.
 
