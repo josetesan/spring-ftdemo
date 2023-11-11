@@ -1,6 +1,5 @@
 package es.ing.spring.ftdemo.user.resources;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,11 +18,12 @@ public class UserResource {
   private final ConcurrentMap<String, UserSimulation> users = new ConcurrentHashMap<>();
 
   PortfolioClientExchange portfolioClientExchange;
-  ObjectMapper objectMapper;
+
+  //  ObjectMapper objectMapper;
 
   public UserResource(PortfolioClientExchange portfolioClientExchange) {
     this.portfolioClientExchange = portfolioClientExchange;
-    this.objectMapper = new ObjectMapper();
+    //    this.objectMapper = new ObjectMapper();
   }
 
   @GetMapping
@@ -34,7 +34,7 @@ public class UserResource {
   @PostMapping
   public void add() {
     String user = Faker.instance().harryPotter().character();
-    UserSimulation simulation = new UserSimulation(objectMapper, portfolioClientExchange, user);
+    UserSimulation simulation = new UserSimulation(/*objectMapper,*/ portfolioClientExchange, user);
     users.put(user, simulation);
   }
 

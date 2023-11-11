@@ -4,16 +4,20 @@ import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.springframework.stereotype.Service;
 
 @Service
 public class StockPriceService {
+  ExecutorService scheduler;
   StockPriceClientExchange stockPriceClientExchange;
   StatsResource stats;
 
   public StockPriceService(StockPriceClientExchange stockPriceClientExchange, StatsResource stats) {
     this.stockPriceClientExchange = stockPriceClientExchange;
     this.stats = stats;
+    this.scheduler = Executors.newCachedThreadPool();
   }
 
   private final ConcurrentMap<String, StockPrice> cache = new ConcurrentHashMap<>();
@@ -21,8 +25,8 @@ public class StockPriceService {
   //    @Bulkhead(name = "bulk", type = Bulkhead.Type.THREADPOOL)
   //          @CircuitBreaker(name = "circuit")
   //    @Retry(name = "retry", fallbackMethod = "getPriceFallback")
-  @TimeLimiter(name = "limiter")
-  CompletableFuture<StockPrice> getPrice(String ticker) {
+  @TimeLimiter(name = "limiter", fallbackMethod = "getPriceFallback")
+  public CompletableFuture<StockPrice> getPrice(String ticker) {
     return CompletableFuture.supplyAsync(
         () -> {
           StockPrice result = stockPriceClientExchange.findById(ticker);
@@ -30,10 +34,11 @@ public class StockPriceService {
           stats.recordNormal();
           stats.setCacheSize(cache.size());
           return result;
-        });
+        },
+        scheduler);
   }
 
-  public CompletableFuture<StockPrice> getPriceFallback(String ticker) {
+  public CompletableFuture<StockPrice> getPriceFallback(String ticker, Throwable t) {
     return CompletableFuture.supplyAsync(
         () -> {
           stats.recordCached();

@@ -46,15 +46,15 @@ public class StockPriceResource {
             } else if (randomOutcome < 6) {
               stats.recordKo();
               randomSleep(0, 5000);
-              throw new InternalServerErrorException("randomOutcome < 6");
+              throw new InternalServerErrorException();
             } else if (randomOutcome < 7) {
               stats.recordKo();
               randomSleep(0, 5000);
-              throw new BadRequestException("randomOutcome < 7");
+              throw new BadRequestException();
             } else {
               stats.recordKo();
               randomSleep(0, 5000);
-              throw new OkException("randomOutcome > 7");
+              throw new OkException();
             }
           }
         });
@@ -86,23 +86,23 @@ public class StockPriceResource {
   @ResponseStatus(value = HttpStatus.BAD_REQUEST)
   class BadRequestException extends RuntimeException {
 
-    public BadRequestException(String s) {
-      super(s);
+    public BadRequestException() {
+      super();
     }
   }
 
   @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
   class InternalServerErrorException extends RuntimeException {
-    public InternalServerErrorException(String s) {
-      super(s);
+    public InternalServerErrorException() {
+      super();
     }
   }
 
   @ResponseStatus(value = HttpStatus.OK)
   class OkException extends RuntimeException {
 
-    public OkException(String s) {
-      super(s);
+    public OkException() {
+      super();
     }
   }
 }
