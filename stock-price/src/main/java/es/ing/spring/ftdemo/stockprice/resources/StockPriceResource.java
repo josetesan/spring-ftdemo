@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/stocks")
 public class StockPriceResource {
-  private static final int FAST = 10;
-  private static final int SLOW = 20;
+  private static final int FAST = 15;
+  private static final int SLOW = 25;
 
   private final ConcurrentMap<String, Integer> prices;
   private final StatsResource stats;

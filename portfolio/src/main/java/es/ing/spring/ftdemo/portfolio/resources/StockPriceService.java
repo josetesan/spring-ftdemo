@@ -1,6 +1,6 @@
 package es.ing.spring.ftdemo.portfolio.resources;
 
-import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -22,10 +22,12 @@ public class StockPriceService {
 
   private final ConcurrentMap<String, StockPrice> cache = new ConcurrentHashMap<>();
 
-  //    @Bulkhead(name = "bulk", type = Bulkhead.Type.THREADPOOL)
-  //          @CircuitBreaker(name = "circuit")
-  //    @Retry(name = "retry", fallbackMethod = "getPriceFallback")
-  @TimeLimiter(name = "limiter", fallbackMethod = "getPriceFallback")
+  //  @Bulkhead(name = "bulk", type = Bulkhead.Type.THREADPOOL)
+  //  @CircuitBreaker(name = "circuit")
+  //      @Retry(name = "retry", fallbackMethod = "getPriceFallback")
+  @Retry(name = "retry")
+  //    @TimeLimiter(name = "limiter", fallbackMethod = "getPriceFallback")
+  //  @TimeLimiter(name = "limiter")
   public CompletableFuture<StockPrice> getPrice(String ticker) {
     return CompletableFuture.supplyAsync(
         () -> {
