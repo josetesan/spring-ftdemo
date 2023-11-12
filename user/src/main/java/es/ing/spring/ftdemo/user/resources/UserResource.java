@@ -4,7 +4,6 @@ import com.github.javafaker.Faker;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,22 +18,19 @@ public class UserResource {
 
   PortfolioClientExchange portfolioClientExchange;
 
-  //  ObjectMapper objectMapper;
-
   public UserResource(PortfolioClientExchange portfolioClientExchange) {
     this.portfolioClientExchange = portfolioClientExchange;
-    //    this.objectMapper = new ObjectMapper();
   }
 
   @GetMapping
   public List<User> get() {
-    return users.values().stream().map(UserSimulation::toUser).collect(Collectors.toList());
+    return users.values().stream().map(UserSimulation::toUser).toList();
   }
 
   @PostMapping
   public void add() {
     String user = Faker.instance().harryPotter().character();
-    UserSimulation simulation = new UserSimulation(/*objectMapper,*/ portfolioClientExchange, user);
+    UserSimulation simulation = new UserSimulation(portfolioClientExchange, user);
     users.put(user, simulation);
   }
 

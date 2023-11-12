@@ -16,9 +16,7 @@ Este servicio StockPrice está tuneado para la demo para fallar cuando recibe ci
 
 ## Start
 
-1. Arrancar servicios y ver peticiones en todos
-2. Arrancar prometheus y grafana
-3. Ir a grafana y ver metricas
+Arrancar servicios y ver peticiones en todos
 
 ## RunBook
 
