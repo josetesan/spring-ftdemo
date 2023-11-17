@@ -32,7 +32,9 @@ public class PortfolioResource {
 
   @GetMapping("/{user}")
   public CompletableFuture<Portfolio> get(@PathVariable("user") String user) {
-    return getOrCreatePortfolioContent(user).thenApply(this::getStockPrices).thenApply(this::fillPortfolio);
+    return getOrCreatePortfolioContent(user)
+        .thenApply(this::getStockPrices)
+        .thenApply(this::fillPortfolio);
   }
 
   private CompletableFuture<List<String>> getOrCreatePortfolioContent(final String user) {
