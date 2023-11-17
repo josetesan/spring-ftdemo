@@ -1,0 +1,9 @@
+@startuml
+Actor User
+User -> Portfolio: GET /portfolio/{user}
+Portfolio -> Portfolio: <create random portfolio>
+Portfolio -> Broker: GET /broker/stock/{stock}
+Broker -> Broker: <create random price>
+Broker --> Portfolio: all stocks prices
+Portfolio --> User: portfolio value
+@enduml
