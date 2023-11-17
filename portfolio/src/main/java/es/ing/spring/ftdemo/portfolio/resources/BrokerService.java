@@ -47,5 +47,4 @@ public class BrokerService {
           return cache.getOrDefault(ticker, new StockPrice(ticker, null));
         });
   }
-
 }

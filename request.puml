@@ -1,9 +1,16 @@
-@startuml
+@startuml fault tolerant
 Actor User
 User -> Portfolio: GET /portfolio/{user}
 Portfolio -> Portfolio: <create random portfolio>
 Portfolio -> Broker: GET /broker/stock/{stock}
 Broker -> Broker: <create random price>
 Broker --> Portfolio: all stocks prices
+Portfolio -> Portfolio: cache succesfull response
+note right
+Caching puede ser util a veces,
+ver los ultimos movimientos de cuenta.
+Pero otra veces no, 
+como por ejemplo ver el saldo de tu cuenta
+end note
 Portfolio --> User: portfolio value
 @enduml

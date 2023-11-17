@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,13 +63,9 @@ public class PortfolioController {
 
   private Portfolio fillPortfolio(List<CompletableFuture<StockPrice>> portfolioData) {
 
-    Integer totalPrice =
-        portfolioData.stream()
-            .map(CompletableFuture::join)
-            .map(stockPrice -> stockPrice.price)
-            .filter(Objects::nonNull)
-            .reduce(0, (Integer::sum));
     List<StockPrice> data = portfolioData.stream().map(CompletableFuture::join).toList();
+    Integer totalPrice =
+        data.stream().map(StockPrice::price).filter(Objects::nonNull).reduce(0, (Integer::sum));
     return new Portfolio(portfolioData.size(), totalPrice, data);
   }
 

@@ -50,8 +50,8 @@ public class UserSimulation {
     synchronized (this) {
       requestDuration = end - start;
       error = message;
-      portfolioSize = portfolio == null ? -1 : portfolio.size;
-      portfolioValue = portfolio == null ? null : portfolio.totalPrice;
+      portfolioSize = portfolio == null ? -1 : portfolio.size();
+      portfolioValue = portfolio == null ? null : portfolio.totalPrice();
     }
 
     executor.schedule(this::update, 200, TimeUnit.MILLISECONDS);
