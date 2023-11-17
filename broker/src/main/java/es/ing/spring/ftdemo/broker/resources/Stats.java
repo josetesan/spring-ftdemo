@@ -1,4 +1,4 @@
-package es.ing.spring.ftdemo.stockprice.resources;
+package es.ing.spring.ftdemo.broker.resources;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 

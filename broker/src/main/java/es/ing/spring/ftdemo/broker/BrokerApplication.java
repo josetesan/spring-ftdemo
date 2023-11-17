@@ -1,11 +1,11 @@
-package es.ing.spring.ftdemo.stockprice;
+package es.ing.spring.ftdemo.broker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class StockPriceApplication {
+public class BrokerApplication {
   public static void main(String[] args) {
-    SpringApplication.run(StockPriceApplication.class, args);
+    SpringApplication.run(BrokerApplication.class, args);
   }
 }

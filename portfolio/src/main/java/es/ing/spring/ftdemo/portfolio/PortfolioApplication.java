@@ -1,6 +1,6 @@
 package es.ing.spring.ftdemo.portfolio;
 
-import es.ing.spring.ftdemo.portfolio.resources.StockPriceClientExchange;
+import es.ing.spring.ftdemo.portfolio.resources.BrokerClientExchange;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -18,13 +18,13 @@ public class PortfolioApplication {
   }
 
   @Bean
-  StockPriceClientExchange stockPriceClientExchange(
+  BrokerClientExchange stockPriceClientExchange(
       @Value("${spring.http.clients.stockservice.url}") String url,
       ObservationRegistry observationRegistry) {
     RestClient restClient =
         RestClient.builder().baseUrl(url).observationRegistry(observationRegistry).build();
     HttpServiceProxyFactory factory =
         HttpServiceProxyFactory.builderFor(RestClientAdapter.create(restClient)).build();
-    return factory.createClient(StockPriceClientExchange.class);
+    return factory.createClient(BrokerClientExchange.class);
   }
 }

@@ -1,4 +1,4 @@
-package es.ing.spring.ftdemo.stockprice.resources;
+package es.ing.spring.ftdemo.broker.resources;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/stocks")
-public class StockPriceResource {
+public class BrokerController {
   private static final int FAST = 15;
   private static final int SLOW = 25;
 
   private final ConcurrentMap<String, Integer> prices;
-  private final StatsResource stats;
+  private final StatsController stats;
 
-  public StockPriceResource(StatsResource stats) {
+  public BrokerController(StatsController stats) {
     this.stats = stats;
     this.prices = new ConcurrentHashMap<>();
   }

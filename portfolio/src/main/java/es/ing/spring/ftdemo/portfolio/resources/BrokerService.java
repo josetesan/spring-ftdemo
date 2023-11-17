@@ -10,13 +10,13 @@ import java.util.concurrent.Executors;
 import org.springframework.stereotype.Service;
 
 @Service
-public class StockPriceService {
+public class BrokerService {
   ExecutorService scheduler;
-  StockPriceClientExchange stockPriceClientExchange;
-  StatsResource stats;
+  BrokerClientExchange brokerClientExchange;
+  StatsController stats;
 
-  public StockPriceService(StockPriceClientExchange stockPriceClientExchange, StatsResource stats) {
-    this.stockPriceClientExchange = stockPriceClientExchange;
+  public BrokerService(BrokerClientExchange brokerClientExchange, StatsController stats) {
+    this.brokerClientExchange = brokerClientExchange;
     this.stats = stats;
     this.scheduler = Executors.newCachedThreadPool();
   }
@@ -31,7 +31,7 @@ public class StockPriceService {
   public CompletableFuture<StockPrice> getPrice(String ticker) {
     return CompletableFuture.supplyAsync(
         () -> {
-          StockPrice result = stockPriceClientExchange.findById(ticker);
+          StockPrice result = brokerClientExchange.findById(ticker);
           cache.put(ticker, result);
           stats.recordNormal();
           stats.setCacheSize(cache.size());
@@ -48,7 +48,4 @@ public class StockPriceService {
         });
   }
 
-  void cleanCache() {
-    cache.clear();
-  }
 }

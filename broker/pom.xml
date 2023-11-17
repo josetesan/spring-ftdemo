@@ -8,10 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>stock-price</artifactId>
-
-
-
+  <artifactId>broker</artifactId>
 
   <build>
     <plugins>

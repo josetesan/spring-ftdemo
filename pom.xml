@@ -19,9 +19,9 @@
   <description>spring-fault-tolerance</description>
 
   <modules>
-    <module>stock-price</module>
     <module>user</module>
     <module>portfolio</module>
+    <module>broker</module>
   </modules>
 
   <properties>

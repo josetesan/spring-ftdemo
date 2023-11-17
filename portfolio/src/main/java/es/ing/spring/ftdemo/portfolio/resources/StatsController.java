@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/portfolio/stats")
-public class StatsResource {
+public class StatsController {
   private final AtomicInteger allTickersCount;
   private final AtomicInteger cacheSize;
   private final List<Long> timestamps;
   private final List<Integer> totalCounters;
   private final List<Integer> cachedCounters;
 
-  public StatsResource() {
+  public StatsController() {
     cacheSize = new AtomicInteger(0);
     allTickersCount = new AtomicInteger(0);
     timestamps = new ArrayList<>(List.of(0L));

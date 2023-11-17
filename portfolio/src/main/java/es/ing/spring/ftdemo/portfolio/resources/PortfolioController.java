@@ -17,15 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/portfolio")
-public class PortfolioResource {
+public class PortfolioController {
   private final ConcurrentMap<String, List<String>> portfolios =
       new ConcurrentHashMap<>(); // tickers by user
 
-  StockPriceService service;
+  BrokerService service;
 
-  StatsResource stats;
+  StatsController stats;
 
-  public PortfolioResource(StockPriceService service, StatsResource stats) {
+  public PortfolioController(BrokerService service, StatsController stats) {
     this.service = service;
     this.stats = stats;
   }
@@ -72,11 +72,6 @@ public class PortfolioResource {
             .reduce(0, (Integer::sum));
     List<StockPrice> data = portfolioData.stream().map(CompletableFuture::join).toList();
     return new Portfolio(portfolioData.size(), totalPrice, data);
-  }
-
-  @DeleteMapping("/cache")
-  public void deleteCache() {
-    service.cleanCache();
   }
 
   private String generateTicker() {

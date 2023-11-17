@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users")
-public class UserResource {
+public class UserController {
   private final ConcurrentMap<String, UserSimulation> users = new ConcurrentHashMap<>();
 
   PortfolioClientExchange portfolioClientExchange;
 
-  public UserResource(PortfolioClientExchange portfolioClientExchange) {
+  public UserController(PortfolioClientExchange portfolioClientExchange) {
     this.portfolioClientExchange = portfolioClientExchange;
   }
 

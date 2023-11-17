@@ -1,4 +1,4 @@
-package es.ing.spring.ftdemo.stockprice.resources;
+package es.ing.spring.ftdemo.broker.resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/stocks/stats")
-public class StatsResource {
+public class StatsController {
   private final AtomicInteger concurrentRequests;
 
   private final List<Long> timestamps;
@@ -20,7 +20,7 @@ public class StatsResource {
 
   private long lastFullSecond = System.currentTimeMillis();
 
-  public StatsResource() {
+  public StatsController() {
     concurrentRequests = new AtomicInteger(0);
     timestamps = new ArrayList<>(List.of(0L));
     totalCounters = new ArrayList<>(List.of(0));
