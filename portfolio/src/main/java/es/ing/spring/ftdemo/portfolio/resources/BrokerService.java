@@ -1,5 +1,9 @@
 package es.ing.spring.ftdemo.portfolio.resources;
 
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -9,18 +13,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BrokerService {
-  ExecutorService scheduler;
+  private static final ExecutorService scheduler = Executors.newCachedThreadPool();
   BrokerClientExchange brokerClientExchange;
   StatsController stats;
 
   public BrokerService(BrokerClientExchange brokerClientExchange, StatsController stats) {
     this.brokerClientExchange = brokerClientExchange;
     this.stats = stats;
-    this.scheduler = Executors.newCachedThreadPool();
   }
 
   private final ConcurrentMap<String, StockPrice> cache = new ConcurrentHashMap<>();
 
+  @Retry(name = "retry", fallbackMethod = "getPriceFallback")
+  @TimeLimiter(name = "limiter")
+  @CircuitBreaker(name = "circuitbreaker")
+  @Bulkhead(name = "bulkhead", type = Bulkhead.Type.THREADPOOL)
   public CompletableFuture<StockPrice> getPrice(String ticker) {
     return CompletableFuture.supplyAsync(
         () -> {

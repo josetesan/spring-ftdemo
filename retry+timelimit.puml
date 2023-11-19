@@ -1,0 +1,17 @@
+@startuml
+
+Service_A -[#red]>x Service_B: Request
+Service_A -[#red]>x Service_B: retry1
+note right: 1 second timeout
+|||
+...500ms  later...
+|||
+Service_A -[#red]>x Service_B: retry2
+note right: 1 second timeout
+|||
+...500ms  later...
+|||
+Service_A -[#red]>x Service_B: retry3
+note right: 1 second timeout
+Service_A -[#blue]> Service_A:  fallback
+@enduml

@@ -22,8 +22,7 @@ public class PortfolioApplication {
       @Value("${spring.http.clients.broker.url}") String url,
       ObservationRegistry observationRegistry) {
     RestClient restClient =
-        RestClient.builder().baseUrl(url)
-            .observationRegistry(observationRegistry).build();
+        RestClient.builder().baseUrl(url).observationRegistry(observationRegistry).build();
     HttpServiceProxyFactory factory =
         HttpServiceProxyFactory.builderFor(RestClientAdapter.create(restClient)).build();
     return factory.createClient(BrokerClientExchange.class);

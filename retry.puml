@@ -1,0 +1,18 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+Service_A -[#red]>x 3rdParty: Request
+Service_A -[#red]>x 3rdParty: retry1
+note right 3rdParty: By default, wait time between retries is 500ms
+|||
+...500ms later...
+|||
+Service_A -[#red]>x 3rdParty: retry2
+|||
+...500ms later...
+|||
+Service_A -[#red]>x 3rdParty: retry3
+note right 3rdParty: By default, There are 3 retries
+Service_A -[#blue]> Service_A:  fallback
+@enduml
