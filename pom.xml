@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>3.2.0</version>
-    <relativePath/>
+    <relativePath />
     <!-- lookup parent from repository -->
   </parent>
 
@@ -26,7 +28,7 @@
 
   <properties>
     <java.version>17</java.version>
-    <spring-cloud.version>2023.0.0-RC1</spring-cloud.version>
+    <spring-cloud.version>2023.0.0</spring-cloud.version>
     <fmt-plugin.version>2.21.1</fmt-plugin.version>
   </properties>
 
@@ -42,7 +44,10 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
-
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
@@ -68,7 +73,7 @@
     </dependency>
 
   </dependencies>
-
+  <!--
   <repositories>
     <repository>
       <id>spring-milestones</id>
@@ -89,4 +94,5 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
+  -->
 </project>

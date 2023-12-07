@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.support.RestClientAdapter;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 @SpringBootApplication
@@ -21,10 +21,10 @@ public class PortfolioApplication {
   BrokerClientExchange stockPriceClientExchange(
       @Value("${spring.http.clients.broker.url}") String url,
       ObservationRegistry observationRegistry) {
-    RestClient restClient =
-        RestClient.builder().baseUrl(url).observationRegistry(observationRegistry).build();
+    WebClient webClient =
+        WebClient.builder().baseUrl(url).observationRegistry(observationRegistry).build();
     HttpServiceProxyFactory factory =
-        HttpServiceProxyFactory.builderFor(RestClientAdapter.create(restClient)).build();
+        HttpServiceProxyFactory.builderFor(WebClientAdapter.create(webClient)).build();
     return factory.createClient(BrokerClientExchange.class);
   }
 }

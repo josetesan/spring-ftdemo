@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class BrokerController {
   private static final int FAST = 15;
   private static final int SLOW = 25;
+  private static final int OK_THRESHOLD = 3;
+  private static final int INTERNAL_ERROR_THRESHOLD = 6;
+  private static final int BAD_REQUEST_THRESHOLD = 7;
 
   private final ConcurrentMap<String, Integer> prices;
   private final StatsController stats;
@@ -27,37 +30,61 @@ public class BrokerController {
   @GetMapping("/stock/{ticker}")
   public StockPrice get(@PathVariable String ticker) {
     return stats.request(
-        currentInFlightRequests -> {
-          if (currentInFlightRequests <= FAST) {
-            stats.recordOk();
-            randomSleep(5, 15);
-            return priceOf(ticker);
-          } else if (currentInFlightRequests <= SLOW) {
-            stats.recordOk();
-            randomSleep(100, 1000);
-            return priceOf(ticker);
-          } else {
-            // recibimos mas de 20 peticiones por segundo, forcemos errores
-            int randomOutcome = ThreadLocalRandom.current().nextInt(10);
-            if (randomOutcome < 3) {
-              stats.recordOk();
-              randomSleep(500, 5000);
-              return priceOf(ticker);
-            } else if (randomOutcome < 6) {
-              stats.recordKo();
-              randomSleep(0, 5000);
-              throw new InternalServerErrorException();
-            } else if (randomOutcome < 7) {
-              stats.recordKo();
-              randomSleep(0, 5000);
-              throw new BadRequestException();
-            } else {
-              stats.recordKo();
-              randomSleep(0, 5000);
-              throw new OkException();
-            }
-          }
-        });
+        currentInFlightRequests ->
+            getResponseBasedOnFlightRequests(currentInFlightRequests, ticker));
+  }
+
+  private StockPrice getResponseBasedOnFlightRequests(int currentInFlightRequests, String ticker) {
+    if (currentInFlightRequests <= FAST) {
+      return getFastResponse(ticker);
+    }
+
+    if (currentInFlightRequests <= SLOW) {
+      return getSlowResponse(ticker);
+    }
+
+    return getRandomizedResponse(ticker);
+  }
+
+  private StockPrice getFastResponse(String ticker) {
+    recordAndSleepOk(5, 15);
+    return priceOf(ticker);
+  }
+
+  private StockPrice getSlowResponse(String ticker) {
+    recordAndSleepOk(100, 1000);
+    return priceOf(ticker);
+  }
+
+  private StockPrice getRandomizedResponse(String ticker) {
+    int randomOutcome = ThreadLocalRandom.current().nextInt(10);
+    if (randomOutcome < OK_THRESHOLD) {
+      recordAndSleepOk(500, 5000);
+      return priceOf(ticker);
+    }
+
+    if (randomOutcome < INTERNAL_ERROR_THRESHOLD) {
+      recordAndSleepKo(0, 5000);
+      throw new InternalServerErrorException();
+    }
+
+    if (randomOutcome < BAD_REQUEST_THRESHOLD) {
+      recordAndSleepKo(0, 5000);
+      throw new BadRequestException();
+    }
+
+    recordAndSleepKo(0, 5000);
+    throw new OkException();
+  }
+
+  private void recordAndSleepOk(int minSleepTime, int maxSleepTime) {
+    stats.recordOk();
+    randomSleep(minSleepTime, maxSleepTime);
+  }
+
+  private void recordAndSleepKo(int minSleepTime, int maxSleepTime) {
+    stats.recordKo();
+    randomSleep(minSleepTime, maxSleepTime);
   }
 
   private void randomSleep(long low, long high) {
@@ -84,7 +111,7 @@ public class BrokerController {
   }
 
   @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-  class BadRequestException extends RuntimeException {
+  static class BadRequestException extends RuntimeException {
 
     public BadRequestException() {
       super();
@@ -92,14 +119,14 @@ public class BrokerController {
   }
 
   @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-  class InternalServerErrorException extends RuntimeException {
+  static class InternalServerErrorException extends RuntimeException {
     public InternalServerErrorException() {
       super();
     }
   }
 
   @ResponseStatus(value = HttpStatus.OK)
-  class OkException extends RuntimeException {
+  static class OkException extends RuntimeException {
 
     public OkException() {
       super();
