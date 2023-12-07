@@ -28,7 +28,7 @@
 
   <properties>
     <java.version>17</java.version>
-    <spring-cloud.version>2023.0.0-RC1</spring-cloud.version>
+    <spring-cloud.version>2023.0.0</spring-cloud.version>
     <fmt-plugin.version>2.21.1</fmt-plugin.version>
   </properties>
 
@@ -73,6 +73,7 @@
     </dependency>
 
   </dependencies>
+  <!--
   <repositories>
     <repository>
       <id>spring-milestones</id>
@@ -93,4 +94,5 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
+  -->
 </project>
